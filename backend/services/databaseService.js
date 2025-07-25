@@ -4,6 +4,11 @@ export class DatabaseService {
   // Account management
   async saveAccount(accountData) {
     try {
+      if (!supabase) {
+        console.warn('Database not configured, skipping account save');
+        return null;
+      }
+      
       const { data, error } = await supabase
         .from('accounts')
         .upsert({
@@ -26,6 +31,11 @@ export class DatabaseService {
 
   async getAccounts() {
     try {
+      if (!supabase) {
+        console.warn('Database not configured, returning empty accounts list');
+        return [];
+      }
+      
       const { data, error } = await supabase
         .from('accounts')
         .select('*')
@@ -42,6 +52,11 @@ export class DatabaseService {
   // Campaign data management
   async saveCampaignData(accountId, campaigns) {
     try {
+      if (!supabase) {
+        console.warn('Database not configured, skipping campaign data save');
+        return null;
+      }
+      
       const campaignInserts = campaigns.map(campaign => ({
         account_id: accountId,
         google_ads_campaign_id: campaign.id,
@@ -84,6 +99,11 @@ export class DatabaseService {
 
   async saveDailyData(accountId, campaignId, dailyData) {
     try {
+      if (!supabase) {
+        console.warn('Database not configured, skipping daily data save');
+        return null;
+      }
+      
       const dailyInserts = dailyData.map(day => ({
         account_id: accountId,
         campaign_id: campaignId,
@@ -112,6 +132,11 @@ export class DatabaseService {
   // Report generation
   async generateReport(accountId, dateRange = 30) {
     try {
+      if (!supabase) {
+        console.warn('Database not configured, returning empty report');
+        return { campaigns: [], summary: {} };
+      }
+      
       const startDate = new Date(Date.now() - (dateRange * 24 * 60 * 60 * 1000))
         .toISOString().split('T')[0];
       
@@ -136,6 +161,11 @@ export class DatabaseService {
   // Save account summary
   async saveAccountSummary(accountId, summaryData) {
     try {
+      if (!supabase) {
+        console.warn('Database not configured, skipping account summary save');
+        return null;
+      }
+      
       const { data, error } = await supabase
         .from('account_summaries')
         .upsert({

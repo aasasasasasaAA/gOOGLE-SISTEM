@@ -6,15 +6,33 @@ dotenv.config();
 
 const router = express.Router();
 
-const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  `${process.env.FRONTEND_URL}/auth/callback`
-);
+// Check if we have the required environment variables
+const hasGoogleCredentials = process.env.GOOGLE_CLIENT_ID && 
+                            process.env.GOOGLE_CLIENT_SECRET && 
+                            process.env.FRONTEND_URL &&
+                            process.env.GOOGLE_CLIENT_ID !== 'your_google_client_id_here' &&
+                            process.env.GOOGLE_CLIENT_SECRET !== 'your_google_client_secret_here';
+
+let oauth2Client = null;
+
+if (hasGoogleCredentials) {
+  oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    `${process.env.FRONTEND_URL}/auth/callback`
+  );
+}
 
 // Generate auth URL
 router.get('/url', (req, res) => {
   try {
+    if (!hasGoogleCredentials) {
+      return res.status(503).json({ 
+        error: 'Google credentials not configured',
+        message: 'Please configure GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and FRONTEND_URL in your .env file'
+      });
+    }
+
     const scopes = [
       'https://www.googleapis.com/auth/adwords',
       'https://www.googleapis.com/auth/userinfo.email',
@@ -37,6 +55,13 @@ router.get('/url', (req, res) => {
 // Handle OAuth callback
 router.post('/callback', async (req, res) => {
   try {
+    if (!hasGoogleCredentials) {
+      return res.status(503).json({ 
+        error: 'Google credentials not configured',
+        message: 'Please configure Google credentials in your .env file'
+      });
+    }
+
     const { code } = req.body;
     
     if (!code) {
@@ -69,6 +94,13 @@ router.post('/callback', async (req, res) => {
 // Refresh token
 router.post('/refresh', async (req, res) => {
   try {
+    if (!hasGoogleCredentials) {
+      return res.status(503).json({ 
+        error: 'Google credentials not configured',
+        message: 'Please configure Google credentials in your .env file'
+      });
+    }
+
     const { refreshToken } = req.body;
     
     if (!refreshToken) {
@@ -88,6 +120,13 @@ router.post('/refresh', async (req, res) => {
 // Validate token
 router.post('/validate', async (req, res) => {
   try {
+    if (!hasGoogleCredentials) {
+      return res.status(503).json({ 
+        error: 'Google credentials not configured',
+        message: 'Please configure Google credentials in your .env file'
+      });
+    }
+
     const { accessToken } = req.body;
     
     if (!accessToken) {

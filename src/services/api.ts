@@ -43,6 +43,11 @@ api.interceptors.response.use(
       window.location.href = '/login';
     }
     
+    // Handle service unavailable (missing configuration)
+    if (error.response?.status === 503) {
+      console.warn('Service configuration issue:', error.response.data.message);
+    }
+    
     return Promise.reject(error);
   }
 );

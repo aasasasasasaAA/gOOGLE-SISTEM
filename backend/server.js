@@ -6,13 +6,14 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 
+// Configure environment variables
+dotenv.config();
+
 // Import routes
 import authRoutes from './routes/auth.js';
 import campaignRoutes from './routes/campaigns.js';
 import accountRoutes from './routes/accounts.js';
 import reportsRoutes from './routes/reports.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
