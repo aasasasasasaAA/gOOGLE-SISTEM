@@ -18,6 +18,10 @@ import reportsRoutes from './routes/reports.js';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+app.get('/', (req, res) => {
+  res.send('🚀 Backend Google Ads API rodando! Veja em /api ou /health');
+});
+
 // Security middleware
 app.use(helmet());
 app.use(compression());
