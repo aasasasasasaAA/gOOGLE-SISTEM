@@ -92,10 +92,13 @@ export const useAuth = () => {
 
   const getAuthUrl = async () => {
     try {
+      console.log('Attempting to get auth URL from API...');
       const response = await authApi.getAuthUrl();
+      console.log('Auth URL response:', response);
       return response.authUrl;
     } catch (error) {
       console.error('Failed to get auth URL:', error);
+      console.error('Error details:', error.response?.data || error.message);
       throw error;
     }
   };
