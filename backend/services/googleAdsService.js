@@ -1,4 +1,4 @@
-import { getCustomerClient, googleAdsClient } from '../config/googleAds.js';
+import { getCustomerClient, getDefaultCustomerClient, googleAdsClient } from '../config/googleAds.js';
 
 export class GoogleAdsService {
   constructor(customerId) {

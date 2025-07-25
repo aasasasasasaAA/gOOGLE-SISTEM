@@ -1,9 +1,38 @@
 import express from 'express';
 import { GoogleAdsService } from '../services/googleAdsService.js';
 import { DatabaseService } from '../services/databaseService.js';
+import { testGoogleAdsConnection } from '../config/googleAds.js';
 
 const router = express.Router();
 const dbService = new DatabaseService();
+
+// Test Google Ads connection
+router.get('/test-connection', async (req, res) => {
+  try {
+    const isConnected = await testGoogleAdsConnection();
+    if (isConnected) {
+      res.json({ 
+        status: 'success', 
+        message: 'Google Ads API connection successful',
+        connected: true 
+      });
+    } else {
+      res.status(503).json({ 
+        status: 'error', 
+        message: 'Google Ads API not configured or connection failed',
+        connected: false 
+      });
+    }
+  } catch (error) {
+    console.error('Error testing Google Ads connection:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Failed to test Google Ads connection',
+      error: error.message,
+      connected: false 
+    });
+  }
+});
 
 // Get all accounts
 router.get('/', async (req, res) => {
